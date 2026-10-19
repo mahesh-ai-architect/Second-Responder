@@ -1,0 +1,2 @@
+# Used by the two evaluation workbook generators; the n8n workflows do not need Python.
+XlsxWriter>=3.2,<4

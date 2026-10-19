@@ -1,0 +1,14 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+~$*.xlsx
+
+# Keep original downloads here while reviewing; publish reviewed copies in workflows/.
+workflows/raw/
+
+# Preserve original evaluation captures locally before repairing public copies.
+evaluation/results/raw/

@@ -1,0 +1,11 @@
+evaluation_id,prompt_version,runbook_id,supported_claims,total_claims,faithfulness_fraction,critical_error,review_notes,provenance
+DEV-001,baseline-before-v3,RB-001,16,17,0.941176,Yes,Payments alert: broadened RB-009 prerequisite; high score did not override critical error.,Manual review in development conversation; not an automated benchmark
+DEV-002,baseline-before-v3,RB-002,11,11,1.000000,No,"Webhook backlog: commands, replay prerequisites, and escalation supported.",Manual review in development conversation; not an automated benchmark
+DEV-003,baseline-before-v3,RB-003,15,17,0.882353,No,Conservative review: two numeric recovery requirements not explicitly supplied.,Manual review in development conversation; not an automated benchmark
+DEV-004,baseline-before-v3,RB-004,9,9,1.000000,No,"MFA push: workaround, restrictions, and escalation supported.",Manual review in development conversation; not an automated benchmark
+DEV-005,baseline-before-v3,RB-005,16,17,0.941176,No,Conservative review: 85% not explicitly established as high watermark/recovery limit.,Manual review in development conversation; not an automated benchmark
+DEV-006,baseline-before-v3,RB-006,10,11,0.909091,No,Conservative review: alternative/remedial wording implies an unestablished substitution.,Manual review in development conversation; not an automated benchmark
+DEV-007,baseline-before-v3,RB-007,11,11,1.000000,No,"Notification backlog: queue priorities, worker limit, and escalation supported.",Manual review in development conversation; not an automated benchmark
+DEV-008,v2,RB-001,,,,Yes,Retest retained broadened RB-009 prerequisite; not fully claim-scored.,Manual review in development conversation; not an automated benchmark
+DEV-009,v3,RB-001,14,14,1.000000,No,Retest 1: pool-saturation prerequisite retained; repeated advice counted where it appears.,Manual review in development conversation; not an automated benchmark
+DEV-010,v3,RB-001,12,13,0.923077,No,Retest 2: prerequisite retained; deploy-feed check gained an unsupported prerequisite under conservative rubric.,Manual review in development conversation; not an automated benchmark

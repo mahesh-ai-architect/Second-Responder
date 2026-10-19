@@ -1,0 +1,59 @@
+{
+  "scope": "Local JSON structure and code review; no external API calls or n8n import execution.",
+  "transformations": [
+    "Remove credential bindings; reconnect credentials after import.",
+    "Remove root instance/version metadata and deployed webhook identifiers.",
+    "Clear pinned data and keep exported workflows inactive.",
+    "Make omitted embeddingsOpenAi 1.2 model default explicit.",
+    "Set Chat Trigger responseMode to lastNode, as confirmed by the user import check.",
+    "Remove unreachable renderer sample code after the final return.",
+    "Preserve node names, connections, System message, and retrieval workflow reference."
+  ],
+  "workflows": [
+    {
+      "raw_filename": "01-ingestion.json",
+      "raw_sha256": "e654e47451fdce26bf96d4144f14b25a2a59e5fd663232dcc1150151b163a9a7",
+      "repository_file": "workflows/01-ingestion.json",
+      "repository_sha256": "9ec59dd31f65e5c6abe3f4f36cc596edc7a2662d40c7fd4d0b1804a861c5de42",
+      "node_count": 10,
+      "credential_bindings_removed": 2,
+      "code_files": [
+        "code/prepare-document.js"
+      ]
+    },
+    {
+      "raw_filename": "02-retrieval.json",
+      "raw_sha256": "0d95aa087f1b90e42008947ea5bb3418374b9ce45093f4d2bb6da57878f8d7c5",
+      "repository_file": "workflows/02-retrieval.json",
+      "repository_sha256": "e7b0aef7c07e363db4ac2c29ed906f1a5ad4a0c82fa243623fd3ed3cfe10d40f",
+      "node_count": 3,
+      "credential_bindings_removed": 2,
+      "code_files": []
+    },
+    {
+      "raw_filename": "Second Responder - Support Chat.json",
+      "raw_sha256": "61b0ddd8c099ad0b44660cfd4c59ba1eaf3464d6b97fed4d22896215c06750d6",
+      "repository_file": "workflows/03-chat.json",
+      "repository_sha256": "8f35833478696350a404a13fdc7dc3592a5283f28c1d139e14aaf386e63f555b",
+      "node_count": 7,
+      "credential_bindings_removed": 1,
+      "code_files": [
+        "code/format-evidence.js",
+        "code/render-cited-answer.js"
+      ]
+    }
+  ],
+  "workflow_dependencies": [
+    {
+      "caller": "workflows/03-chat.json",
+      "node": "Call 'Second Responder \u2014 Retrieval Test.'",
+      "target": "workflows/02-retrieval.json",
+      "input_keys": [
+        "query"
+      ],
+      "resolved_against_raw_exports": true,
+      "reselect_target_after_import": true
+    }
+  ],
+  "missing_exports": []
+}

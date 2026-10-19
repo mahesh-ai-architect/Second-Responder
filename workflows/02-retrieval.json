@@ -1,0 +1,96 @@
+{
+  "name": "Second Responder — Retrieval Test.",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "load",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "second-responder",
+          "mode": "list",
+          "cachedResultName": "second-responder"
+        },
+        "prompt": "={{ $json.query }}",
+        "topK": 3,
+        "options": {
+          "pineconeNamespace": "second-responder-runbooks-9"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "ba238b1f-c244-4718-9e36-e8ef4f16ccf1",
+      "name": "Pinecone Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1536
+        },
+        "model": "text-embedding-3-small"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        208
+      ],
+      "id": "2331288a-d74b-4eda-ab6f-8e4afc5b811b",
+      "name": "Embeddings OpenAI"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "49c4288c-545e-4f5a-b2e7-c79b2a3ac27f",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "tags": []
+}

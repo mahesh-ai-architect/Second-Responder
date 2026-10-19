@@ -1,0 +1,357 @@
+{
+  "name": "Second Responder - Runbook Injestion",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0ba4d95b-6a35-4020-8fbe-e2a5a9dcede1",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/mahesh-ai-architect/Second-Responder/contents/runbooks?ref=main",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "7983f22c-e80d-48b3-9973-176406069b03",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d7285529-e025-41d7-a6cb-eba491f947d4",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "file",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "d08c2668-e6ce-4383-8f6c-ce3537c3543d",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "RB-",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            },
+            {
+              "id": "d15314d7-b25c-4658-8e62-8375aa42c9ea",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": ".md",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f9c64881-7cfa-489b-ba6d-60ef21e5716f",
+      "name": "Keep Runbooks"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        0
+      ],
+      "id": "a1a6fcbe-312a-4a11-8438-23797f143493",
+      "name": "Fetch Markdown"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const file = $json;\n\nconst text = Buffer\n  .from(file.content, 'base64')\n  .toString('utf8');\n\nreturn {\n  json: {\n    text,\n    filename: file.name,\n    source: file.html_url,\n    path: file.path,\n    git_sha: file.sha\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "91e31eb0-8c04-4afb-ab63-0e496c4075ee",
+      "name": "Prepare Document"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "7684fd4a-f592-4a00-b15a-d2c694e375d0",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "second-responder",
+          "mode": "list",
+          "cachedResultName": "second-responder"
+        },
+        "options": {
+          "pineconeNamespace": "={{ 'second-responder-runbooks-' + $execution.id }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        -96
+      ],
+      "id": "0e5d4d6f-900e-4ebf-88a2-458025fe6e37",
+      "name": "Pinecone Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1536
+        },
+        "model": "text-embedding-3-small"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1392,
+        112
+      ],
+      "id": "934e9ff1-702d-4a61-9ae6-daf690545a7c",
+      "name": "Embeddings OpenAI"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "filename",
+                "value": "={{ $json.filename }}"
+              },
+              {
+                "name": "source",
+                "value": "={{ $json.source }}"
+              },
+              {
+                "name": "path",
+                "value": "={{ $json.path }}"
+              },
+              {
+                "name": "git_sha",
+                "value": "={{ $json.git_sha }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1488,
+        112
+      ],
+      "id": "eabe4dfa-8c1c-4833-bfaa-ac86bcf1a948",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        320
+      ],
+      "id": "eebf4891-f298-4cd5-9ef1-1329e970158b",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Keep Runbooks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Runbooks": {
+      "main": [
+        [
+          {
+            "node": "Fetch Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Markdown": {
+      "main": [
+        [
+          {
+            "node": "Prepare Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Document": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "tags": []
+}
