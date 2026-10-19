@@ -1,90 +1,83 @@
 # Second Responder demo script
 
-Target recording length: **about 2:40**, with a hard submission limit below
-3:00. Speak only the quoted narration; screen directions and timestamps are
-not narration. The spoken script is deliberately short to leave room for clicks
-and the model response. Rehearse once with actual response latency.
+This version uses shorter sentences and everyday language. Aim for **2:30–2:45**,
+including clicks and the live response. The assignment limit is **under 3:00**.
+Read only the quoted paragraphs. The screen cues are reminders for you.
+Rehearse once with the actual workflow; response time can vary.
 
 ## Before recording
 
-- Open the repository, all three n8n workflows, the chat panel, and the actual
-  saved evaluation workbook or `evaluation/manual-review-results.csv`.
-- Use the editor chat or a verified published chat workflow containing Prompt v3.
-- Use only synthetic runbook data. Hide credential/settings screens and unrelated tabs.
-- Keep the payments question ready to paste.
-- Confirm the GitHub repository shows the final commit containing all three
-  reviewed workflow exports before recording.
-- If the live answer is incorrect, describe what happened honestly. Do not
-  present an earlier successful answer as the new execution.
+- Open GitHub, the three workflow canvases, the imported chat that uses the new
+  ingestion namespace, and the completed evaluation workbook.
+- Keep the question below ready to paste. You do not need to read the commands
+  in the answer aloud.
+- Use the synthetic runbooks and keep credential screens out of the recording.
+- Say “n-eight-n” for n8n. Say the evaluation scores slowly.
+- If the live answer changes a required condition, describe the error rather
+  than reading the success paragraph below.
 
-## 0:00–0:18 — Problem and project
+## 0:00–0:20 — Show the GitHub repository
 
-**Screen:** GitHub repository overview.
+> When an on-call engineer gets an alert, the first question is: what do I do now?
+> I built Second Responder to help answer that question. It lets engineers ask
+> about an alert in chat and get steps from twelve sample runbooks, with links
+> back to the source.
 
-> “This is Second Responder, an n8n RAG prototype for on-call engineers. It answers
-> ‘What should I do for this alert?’ using twelve synthetic service runbooks,
-> and links its instructions back to the source.”
+## 0:20–0:45 — Show the three workflow canvases
 
-## 0:18–0:43 — Architecture
+> I built this using n8n, OpenAI, and Pinecone. There are three workflows.
+> The first loads the runbooks and creates embeddings, which let us search by
+> meaning. The second finds the three closest matches to a question.
+> The third uses that text to write the chat response and add source links.
 
-**Screen:** Briefly show ingestion, retrieval, and chat canvases; keep zoom readable.
+## 0:45–1:30 — Ask a question in chat
 
-> “There are three workflows. Ingestion reads GitHub markdown, creates OpenAI
-> embeddings, and stores documents in Pinecone. Retrieval accepts a question and
-> returns the top three matches. The chat workflow formats that evidence, uses a
-> Basic LLM Chain with structured output, and renders clickable citations.”
-
-## 0:43–1:30 — Live question and cited response
-
-**Screen:** Chat. Paste and submit:
+Paste and submit:
 
 ```text
 What should I check when payments-api /charge returns 5xx errors and Stripe requests time out?
 ```
 
-**While it runs, say:**
+While the response loads:
 
-> “I’ll ask about payments errors and Stripe timeouts. Retrieval is mandatory
-> before generation. The answer should preserve commands, remediation
-> prerequisites, and escalation thresholds from the retrieved text.”
+> Here, I’m asking about payment failures and Stripe timeouts.
+> The workflow searches the runbooks before asking the model to answer.
 
-**Once the answer appears:** show the first checks, the conditional RB-009 step,
-and click a runbook citation if time permits.
+When the answer appears, scroll through the checks and conditional actions.
+Open one citation if time permits.
 
-> “Here are the checks and conditional actions, with source links. The key detail
-> is that following RB-009 requires connection-pool saturation. A possible pool
-> problem alone should not authorize that remediation.”
+> The response shows what to check, what actions apply, and when to escalate.
+> Each step links to a runbook so the engineer can verify it.
 
-If that condition is wrong in the live answer, replace the preceding paragraph
-with: “This run broadened the prerequisite. I would flag it as a critical error;
-a citation link alone does not establish support.”
+If the live answer is incorrect, replace that last paragraph with:
 
-## 1:30–2:10 — Evaluation and prompt experiment
+> This answer changed a condition from the runbook. I would flag that in my
+> evaluation. A source link by itself does not make the advice correct.
 
-**Screen:** Evaluation record. Point to the initial payments row and the two v3 rows.
+## 1:30–2:15 — Show the evaluation workbook
 
-> “I evaluate individual claims against the evidence from the same execution.
-> Faithfulness is supported claims divided by total claims, with critical errors
-> tracked separately. The initial payments answer scored ninety-four percent
-> but still broadened a remediation condition. Prompt version three made the
-> source-action prerequisite explicit. Two reviewed runs retained it, scoring
-> one hundred percent and ninety-two percent, with no critical errors identified.”
+Point to the original payments row and the two prompt-v3 retests.
 
-## 2:10–2:40 — Boundaries and repository artifacts
+> I also checked whether the answers stayed faithful to the retrieved text.
+> I counted supported claims and tracked critical errors separately.
+> One answer scored ninety-four percent but recommended a database runbook
+> without requiring confirmation that the connection pool was saturated.
+> I revised the prompt to keep each action tied to its original condition.
+> Two follow-up answers scored one hundred percent and ninety-two percent,
+> with no critical errors identified in those reviews.
 
-**Screen:** `PROJECT.md`, then the final `workflows/` folder.
+## 2:15–2:40 — Show PROJECT.md and the workflow files
 
-> “These are development results, not proof of ninety-percent performance on
-> unseen incidents. Next I’ll expand testing and calibrate automated grading.
-> Runbook text reaches both embedding and chat APIs, so sensitive deployments
-> need data controls before those calls. The repository contains the workflow
-> exports, prompts, runbooks, evaluation tooling, and detailed project report.”
+> These are early results; more testing is needed before claiming ninety-percent
+> faithfulness overall. Real company data would also need controls before going
+> to external services.
+> The repository includes the workflows, code, runbooks, evaluation results,
+> and project report.
 
-## Timing and final check
+## After rehearsal
 
-- Keep the finished video below three minutes; aim to stop around 2:40.
-- If the workflow is slow, shorten canvas tours and source-link navigation rather
-  than adding unplanned explanation. Rehearse again if the recording exceeds the limit.
-- Pause between the two evaluation scores so they are clearly **100% and 92%**.
-- Add the final Loom URL to `PROJECT.md`. Review the shared video for accidental
-  exposure of credentials or nonsynthetic information before submission.
+- Check the actual recording duration. If it runs long, shorten the canvas tour
+  and skip opening a citation. Keep the evaluation explanation.
+- The live response may take around thirty seconds based on the observed tests;
+  leave room for it rather than rushing the narration.
+- Review the recording, then add its Loom URL to `PROJECT.md`.
